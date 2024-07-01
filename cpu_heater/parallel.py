@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import concurrent.futures
 import signal
 import sys
@@ -7,14 +9,15 @@ from collections.abc import Callable
 from tqdm import tqdm
 
 
-def multiprocess(item_list: list[tuple], worker_fn: Callable, max_workers: int | None = None, show_progress: bool = False) -> list:
-    def worker_initializer():
-        def handler(signum, frame):
-            sys.exit(1)
-        signal.signal(signal.SIGINT, handler)
+def __worker_initializer():
+    def handler(signum, frame):
+        sys.exit(1)
+    signal.signal(signal.SIGINT, handler)
 
+
+def multiprocess(item_list: list[tuple], worker_fn: Callable, max_workers: int | None = None, show_progress: bool = False) -> list:
     result_list = []
-    with concurrent.futures.ProcessPoolExecutor(max_workers, initializer=worker_initializer) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers, initializer=__worker_initializer) as executor:
         futures = [executor.submit(worker_fn, *item) for item in item_list]
         try:
             if show_progress:
