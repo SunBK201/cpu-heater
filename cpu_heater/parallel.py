@@ -46,6 +46,8 @@ def multiprocess(item_list: list[tuple], worker_fn: Callable, max_workers: int |
             signal.signal(signal.SIGINT, signal.SIG_IGN)
             executor.shutdown()
             sys.exit(1)
+        except Exception as e:
+            traceback.print_exception(e)
     return result_list
 
 
