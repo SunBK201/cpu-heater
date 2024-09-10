@@ -6,8 +6,8 @@ def adder(x, y):
 
 
 def test_cpu_heater():
-    item_list = [(i, i) for i in range(114514)]
-    results = cpu_heater.multiprocess(item_list, adder, max_workers=8, show_progress=True)
+    args_list = [(i, i) for i in range(114514)]
+    results = cpu_heater.multiprocess(adder, args_list, max_workers=8, show_progress=True, timeout=5)
     assert sorted(results) == sorted([i + i for i in range(114514)])
 
 
