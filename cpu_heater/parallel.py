@@ -27,17 +27,28 @@ class Timing:
 def __worker_initializer():
     def handler(signum, frame):
         sys.exit(1)
+
     signal.signal(signal.SIGINT, handler)
 
 
-def multiprocess(worker_fn: Callable, args_list: list[tuple], max_workers: int | None = None, show_progress: bool = False, timeout: int | None = None) -> list:
+def multiprocess(
+    worker_fn: Callable,
+    args_list: list[tuple],
+    max_workers: int | None = None,
+    show_progress: bool = False,
+    timeout: int | None = None,
+) -> list:
     worker_fn = Timing(worker_fn, timeout) if timeout else worker_fn
     result_list = []
-    with concurrent.futures.ProcessPoolExecutor(max_workers, initializer=__worker_initializer) as executor:
+    with concurrent.futures.ProcessPoolExecutor(
+        max_workers, initializer=__worker_initializer
+    ) as executor:
         futures = [executor.submit(worker_fn, *item) for item in args_list]
         try:
             if show_progress:
-                for future in tqdm(concurrent.futures.as_completed(futures), total=len(futures)):
+                for future in tqdm(
+                    concurrent.futures.as_completed(futures), total=len(futures)
+                ):
                     try:
                         result = future.result()
                     except TimeoutError as e:
@@ -65,13 +76,20 @@ def multiprocess(worker_fn: Callable, args_list: list[tuple], max_workers: int |
     return result_list
 
 
-def multithreads(worker_fn: Callable, args_list: list[tuple], max_workers: int | None = None, show_progress: bool = False) -> list:
+def multithreads(
+    worker_fn: Callable,
+    args_list: list[tuple],
+    max_workers: int | None = None,
+    show_progress: bool = False,
+) -> list:
     result_list = []
     with concurrent.futures.ThreadPoolExecutor(max_workers) as executor:
         futures = [executor.submit(worker_fn, *item) for item in args_list]
         try:
             if show_progress:
-                for future in tqdm(concurrent.futures.as_completed(futures), total=len(futures)):
+                for future in tqdm(
+                    concurrent.futures.as_completed(futures), total=len(futures)
+                ):
                     try:
                         result = future.result()
                     except TimeoutError as e:
