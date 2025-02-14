@@ -37,7 +37,11 @@ def multiprocess(
     max_workers: int | None = None,
     show_progress: bool = False,
     timeout: int | None = None,
+    desc: str | None = None,
+    not_none: bool = False,
+    extend_mode: bool = False,
 ) -> list:
+    print("multiprocess")
     worker_fn = Timing(worker_fn, timeout) if timeout else worker_fn
     result_list = []
     with concurrent.futures.ProcessPoolExecutor(
@@ -47,7 +51,9 @@ def multiprocess(
         try:
             if show_progress:
                 for future in tqdm(
-                    concurrent.futures.as_completed(futures), total=len(futures)
+                    concurrent.futures.as_completed(futures),
+                    total=len(futures),
+                    desc=desc,
                 ):
                     try:
                         result = future.result()
@@ -56,7 +62,12 @@ def multiprocess(
                     except Exception as e:
                         traceback.print_exception(e)
                         continue
-                    result_list.append(result)
+                    if not_none and result is None:
+                        continue
+                    if extend_mode:
+                        result_list.extend(result)
+                    else:
+                        result_list.append(result)
             else:
                 for future in concurrent.futures.as_completed(futures):
                     try:
@@ -66,7 +77,12 @@ def multiprocess(
                     except Exception as e:
                         traceback.print_exception(e)
                         continue
-                    result_list.append(result)
+                    if not_none and result is None:
+                        continue
+                    if extend_mode:
+                        result_list.extend(result)
+                    else:
+                        result_list.append(result)
         except KeyboardInterrupt:
             signal.signal(signal.SIGINT, signal.SIG_IGN)
             executor.shutdown()
@@ -81,6 +97,9 @@ def multithreads(
     args_list: list[tuple],
     max_workers: int | None = None,
     show_progress: bool = False,
+    desc: str | None = None,
+    not_none: bool = False,
+    extend_mode: bool = False,
 ) -> list:
     result_list = []
     with concurrent.futures.ThreadPoolExecutor(max_workers) as executor:
@@ -88,7 +107,9 @@ def multithreads(
         try:
             if show_progress:
                 for future in tqdm(
-                    concurrent.futures.as_completed(futures), total=len(futures)
+                    concurrent.futures.as_completed(futures),
+                    total=len(futures),
+                    desc=desc,
                 ):
                     try:
                         result = future.result()
@@ -97,7 +118,12 @@ def multithreads(
                     except Exception as e:
                         traceback.print_exception(e)
                         continue
-                    result_list.append(result)
+                    if not_none and result is None:
+                        continue
+                    if extend_mode:
+                        result_list.extend(result)
+                    else:
+                        result_list.append(result)
             else:
                 for future in concurrent.futures.as_completed(futures):
                     try:
@@ -107,7 +133,12 @@ def multithreads(
                     except Exception as e:
                         traceback.print_exception(e)
                         continue
-                    result_list.append(result)
+                    if not_none and result is None:
+                        continue
+                    if extend_mode:
+                        result_list.extend(result)
+                    else:
+                        result_list.append(result)
         except KeyboardInterrupt:
             signal.signal(signal.SIGINT, signal.SIG_IGN)
             executor.shutdown()
