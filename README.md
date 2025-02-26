@@ -20,7 +20,16 @@ def adder(x, y):
 
 def test_cpu_heater():
     args_list = [(i, i) for i in range(114514)]
-    results = cpu_heater.multiprocess(adder, args_list, max_workers=8, show_progress=True, timeout=5)
+    results = cpu_heater.multiprocess(
+        adder,
+        args_list,
+        max_workers=8,
+        show_progress=True,
+        timeout=10,
+        desc="test",
+        not_none=True,
+        extend_mode=False,
+    )
     assert sorted(results) == sorted([i + i for i in range(114514)])
 ```
 
@@ -34,6 +43,14 @@ def adder(x, y):
 
 def test_cpu_heater():
     args_list = [(i, i) for i in range(114514)]
-    results = cpu_heater.multithreads(adder, args_list, max_workers=8, show_progress=True)
+    results = cpu_heater.multithreads(
+        adder,
+        args_list,
+        max_workers=8,
+        show_progress=True,
+        desc="test",
+        not_none=True,
+        extend_mode=False,
+    )
     assert sorted(results) == sorted([i + i for i in range(114514)])
 ```

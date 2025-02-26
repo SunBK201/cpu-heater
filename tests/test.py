@@ -12,6 +12,7 @@ def test_cpu_heater():
         args_list,
         max_workers=8,
         show_progress=True,
+        timeout=10,
         desc="test",
         not_none=True,
         extend_mode=False,
