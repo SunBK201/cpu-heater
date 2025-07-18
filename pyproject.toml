@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cpu-heater"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = ["tqdm"]
 authors = [{ name = "SunBK201", email = "sunbk201gm@gmail.com" }]
 description = "A Python parallel computing library"
