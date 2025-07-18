@@ -41,7 +41,6 @@ def multiprocess(
     not_none: bool = False,
     extend_mode: bool = False,
 ) -> list:
-    print("multiprocess")
     worker_fn = Timing(worker_fn, timeout) if timeout else worker_fn
     result_list = []
     with concurrent.futures.ProcessPoolExecutor(
